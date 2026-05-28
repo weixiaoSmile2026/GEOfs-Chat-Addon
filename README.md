@@ -1,14 +1,14 @@
 # GEOfs Chat Addon
 
-此插件（Addon）支援設定特定的 **5 位數字房間號碼**，只有加入相同房間的使用者才能看見彼此的訊息。
+This addon allows users to set a specific **5-digit room number**. Only users within the same room can view each other's messages.
 
-### 🔐 使用須知與驗證
-* **Discord 身份驗證**：為了防止系統遭到濫用，使用本插件前必須先進行 Discord 登入驗證。
-* **使用條款**：請在開始使用前，務必詳閱並遵守我們的 [使用條款與規範](https://geofs-chat-app.vercel.app/terms.html)。
+### 🔐 Requirements & Authentication
+* **Discord Authentication**: To prevent abuse and spam, Discord login verification is required before using this addon.
+* **Terms of Service**: Please review and adhere to our [Terms of Service](https://geofs-chat-app.vercel.app/terms.html) before proceeding.
 
-### 🚨 檢舉機制與免責聲明
-* **檢舉功能**：本插件內建檢舉機制。然而，由於目前管理團隊人力有限，且管理員皆有現實生活（課業、工作等）需顧及，檢舉案件可能無法及時處理，敬請見諒。
-* **非專業開發團隊**：我們並非專業的程式設計師，若在操作過程中遇到系統異常或重大 Bug，請勿嘗試惡意漏洞攻擊。我們**嚴厲禁止任何形式的暴力破壞、滲透或攻擊網站行為**。
+### 🚨 Report System & Disclaimer
+* **Report Function**: This addon includes a built-in reporting system. However, due to a shortage of staff and real-life commitments (such as school, work, etc.), reports may not be handled immediately. Thank you for your understanding.
+* **Non-Professional Developers**: We are not professional programmers. If you encounter any critical bugs or system anomalies, please do not attempt to exploit them. We **strictly prohibit any form of vandalism, penetration, or cyberattacks against our website**.
 
-### 💬 聯絡與回報
-若遇到重大突發狀況、程式錯誤（Bug）或有任何疑問，請至我們的 [官方 Discord 伺服器](https://discord.gg/AcjG5q2aGX) 進行回報與討論。
+### 💬 Contact & Support
+If you encounter any critical issues, major bugs, or have any questions, please report and discuss them in our [Official Discord Server](https://discord.gg/AcjG5q2aGX).
