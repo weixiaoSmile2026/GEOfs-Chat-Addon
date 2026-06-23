@@ -15,6 +15,8 @@ This addon allows users to set a specific **5-digit room number**. Only users wi
 * **Report Function**: This addon includes a built-in reporting system. However, due to a shortage of staff and real-life commitments (such as school, work, etc.), reports may not be handled immediately. Thank you for your understanding.
 * **Non-Professional Developers**: We are not professional programmers. If you encounter any critical bugs or system anomalies, please do not attempt to exploit them. We **strictly prohibit any form of vandalism, penetration, or cyberattacks against our website**.
 
+Press T to show or hide
+
 ### 💬 Contact & Support
 If you encounter any critical issues, major bugs, or have any questions, please report and discuss them in our [Official Discord Server](https://discord.gg/AcjG5q2aGX).
 
