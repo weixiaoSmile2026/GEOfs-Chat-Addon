@@ -5,16 +5,13 @@
 // @match        https://*.geo-fs.com/geofs.php*
 // @grant        none
 // ==/UserScript==
-
 (function () {
     'use strict';
-
     const CHAT_URL = "https://geofs-chat-app.vercel.app/";
     let isOpen   = true;
     let savedPos = JSON.parse(localStorage.getItem('geofs_chat_pos')) || { x: 20, y: 20 };
     let savedRoom = localStorage.getItem('geofs_chat_room_persistent') || "20013";
 
-    // ── 移除所有 GeoFS 偵測，直接固定為預設 URL ──
     function buildChatURL() {
         return `${CHAT_URL}?room=${encodeURIComponent(savedRoom)}&geofs_logged_in=false&geofs_callsign=`;
     }
@@ -28,60 +25,69 @@
         `width: 340px`,
         `height: 540px`,
         `z-index: 10001`,
-        `border-radius: 8px`,
+        `border-radius: 10px`,
         `overflow: hidden`,
-        `border: 2px solid #2a2a2a`,
-        `background: #000`,
-        `box-shadow: 0 10px 40px rgba(0,0,0,0.9)`,
+        // 深海軍藍邊框帶輕微藍紫光暈
+        `border: 1.5px solid #3a4a7a`,
+        `background: #070b14`,
+        // 藍色光暈陰影
+        `box-shadow: 0 8px 32px rgba(0,0,0,0.85), 0 0 0 1px rgba(58,74,122,0.25), 0 0 24px rgba(60,100,255,0.15)`,
         `display: block`,
     ].join('; ');
 
     let dragHandle = document.createElement('div');
     dragHandle.style.cssText = [
         `width: 100%`,
-        `height: 28px`,
-        `background: #0d0d0d`,
+        `height: 30px`,
+        `background: rgba(13,18,40,0.88)`,          // 半透明深藍，有透視感
         `cursor: move`,
         `display: flex`,
         `align-items: center`,
-        `padding: 0 10px`,
+        `padding: 0 11px`,
         `font-size: 10px`,
-        `color: #00e5ff`,
-        `font-family: monospace`,
+        // 冷白標題文字
+        `color: #c8d8ff`,
+        `font-family: 'Courier New', Courier, monospace`,
         `font-weight: bold`,
-        `border-bottom: 1px solid #1a1a1a`,
+        // 藍紫色分隔線
+        `border-bottom: 1px solid rgba(58,74,122,0.6)`,
         `user-select: none`,
         `justify-content: space-between`,
+        `letter-spacing: 0.5px`,
+        // 標題列本身也帶一點 backdrop-filter 毛玻璃感（若瀏覽器支援）
+        `backdrop-filter: blur(4px)`,
     ].join('; ');
 
     let titleSpan = document.createElement('span');
     titleSpan.textContent = '> ACARS PANEL [T]';
 
     let geofsIndicator = document.createElement('span');
-    geofsIndicator.style.cssText = 'font-size: 9px; color: #888;';
-    geofsIndicator.textContent   = 'ACARS: READY';
+    geofsIndicator.style.cssText = [
+        `font-size: 9px`,
+        // 琥珀黃，像駕駛艙警示燈
+        `color: #f5c842`,
+        `letter-spacing: 0.5px`,
+    ].join('; ');
+    geofsIndicator.textContent = 'ACARS: READY';
 
     dragHandle.appendChild(titleSpan);
     dragHandle.appendChild(geofsIndicator);
     container.appendChild(dragHandle);
 
-    // ── 建立 Iframe 並「立刻」載入網址 ──
+    // ── 建立 Iframe ──
     let iframe = document.createElement('iframe');
-    iframe.style.cssText = 'width: 100%; height: calc(100% - 28px); border: none;';
+    iframe.style.cssText = 'width: 100%; height: calc(100% - 30px); border: none;';
     iframe.allow = "popups";
-
-    // 這裡直接設定網址，完全不需要等待任何計時器
     iframe.src = buildChatURL();
-
     container.appendChild(iframe);
     document.body.appendChild(container);
 
-    // ── T 鍵開關切換 ──
+    // ── T 鍵開關切換（修正了原本的 bug：.style.style） ──
     window.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         if (e.key.toLowerCase() === 't') {
             isOpen = !isOpen;
-            container.style.style.display = isOpen ? 'block' : 'none';
+            container.style.display = isOpen ? 'block' : 'none';
         }
     });
 
@@ -112,5 +118,4 @@
             iframe.style.pointerEvents = 'auto';
         }
     });
-
 })();
