@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         GeoFS ACARS Controller - Security Edition
-// @version      3.1
+// @name         GeoFS ACARS Controller - Security Edition (Fast Load)
+// @version      3.2
 // @match        http://*.geo-fs.com/geofs.php*
 // @match        https://*.geo-fs.com/geofs.php*
 // @grant        none
@@ -9,44 +9,17 @@
 (function () {
     'use strict';
 
-    const CHAT_URL = "https://geofs-chat-app.vercel.app/";  
+    const CHAT_URL = "https://geofs-chat-app.vercel.app/";
     let isOpen   = true;
     let savedPos = JSON.parse(localStorage.getItem('geofs_chat_pos')) || { x: 20, y: 20 };
     let savedRoom = localStorage.getItem('geofs_chat_room_persistent') || "20013";
 
-    let geofsLoggedIn = false;
-    let realCallsign  = "";
-
-function detectGeoFSLogin() {
-    try {
-        const g = window.geofs || (typeof geofs !== 'undefined' ? geofs : null);
-        if (!g || !g.userRecord) return false;
-
-        const rec = g.userRecord;
-        
-        
-        if (typeof rec.id === 'number' && rec.id > 0) {
-            geofsLoggedIn = true;
-            realCallsign  = rec.callsign || "";
-            return true;
-        }
-    } catch (e) {
-        console.warn('[ACARS] detectGeoFSLogin error:', e);
-    }
-    geofsLoggedIn = false;
-    realCallsign  = "";
-    return false;
-}
-
-   
+    // ── 移除所有 GeoFS 偵測，直接固定為預設 URL ──
     function buildChatURL() {
-        return `${CHAT_URL}`
-             + `?room=${encodeURIComponent(savedRoom)}`
-             + `&geofs_logged_in=${geofsLoggedIn}`
-             + `&geofs_callsign=${encodeURIComponent(realCallsign)}`;
+        return `${CHAT_URL}?room=${encodeURIComponent(savedRoom)}&geofs_logged_in=false&geofs_callsign=`;
     }
 
-
+    // ── 建立 UI 外殼 ──
     let container = document.createElement('div');
     container.style.cssText = [
         `position: fixed`,
@@ -84,74 +57,35 @@ function detectGeoFSLogin() {
     let titleSpan = document.createElement('span');
     titleSpan.textContent = '> ACARS PANEL [T]';
 
-    // GeoFS status indicator in handle
     let geofsIndicator = document.createElement('span');
-    geofsIndicator.style.cssText = 'font-size: 9px; color: #333;';
-    geofsIndicator.textContent   = 'GeoFS: --';
+    geofsIndicator.style.cssText = 'font-size: 9px; color: #888;';
+    geofsIndicator.textContent   = 'ACARS: READY';
 
     dragHandle.appendChild(titleSpan);
     dragHandle.appendChild(geofsIndicator);
     container.appendChild(dragHandle);
 
-    // ── iframe ───────────────────────────────────────────
+    // ── 建立 Iframe 並「立刻」載入網址 ──
     let iframe = document.createElement('iframe');
     iframe.style.cssText = 'width: 100%; height: calc(100% - 28px); border: none;';
-    iframe.allow = "popups";  // ← 加這行
+    iframe.allow = "popups";
+
+    // 這裡直接設定網址，完全不需要等待任何計時器
+    iframe.src = buildChatURL();
+
     container.appendChild(iframe);
     document.body.appendChild(container);
 
-
-    function tryDetectAndLoad() {
-        detectGeoFSLogin();
-        iframe.src = buildChatURL();
-        updateGeoFSIndicator();
-    }
-
-
-    let initAttempts = 0;
-    const initTimer = setInterval(() => {
-        initAttempts++;
-        if (detectGeoFSLogin() || initAttempts >= 20) {
-            clearInterval(initTimer);
-            tryDetectAndLoad();
-        }
-
-        if (initAttempts === 20) tryDetectAndLoad();
-    }, 1000);
-
-
-    setInterval(() => {
-        const wasLoggedIn = geofsLoggedIn;
-        const wasCallsign = realCallsign;
-        detectGeoFSLogin();
-
-        if (wasLoggedIn !== geofsLoggedIn || wasCallsign !== realCallsign) {
-            // Reload iframe with updated params (Discord token is in localStorage so it persists)
-            iframe.src = buildChatURL();
-        }
-        updateGeoFSIndicator();
-    }, 8000);
-
-    function updateGeoFSIndicator() {
-        if (geofsLoggedIn) {
-            geofsIndicator.style.color = '#00ff88';
-            geofsIndicator.textContent = `✈ ${realCallsign || 'LOGGED IN'}`;
-        } else {
-            geofsIndicator.style.color = '#333';
-            geofsIndicator.textContent = 'GeoFS: OFF';
-        }
-    }
-
-    // ── T Key Toggle ──────────────────────────────────────
+    // ── T 鍵開關切換 ──
     window.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         if (e.key.toLowerCase() === 't') {
             isOpen = !isOpen;
-            container.style.display = isOpen ? 'block' : 'none';
+            container.style.style.display = isOpen ? 'block' : 'none';
         }
     });
 
-    // ── Drag Logic ────────────────────────────────────────
+    // ── 拖曳面板邏輯 ──
     let isDragging = false;
     let dragStart  = { x: 0, y: 0 };
 
